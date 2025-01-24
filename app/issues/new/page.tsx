@@ -35,6 +35,30 @@ const NewIssuePage = () => {
     }
   }, [error]);
 
+  const onSubmit = handleSubmit(async data => {
+    try {
+      setLoading(true);
+      await axios.post("/api/issues", data);
+      router.push("/issues");
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        setLoading(false);
+        const axiosError = error as AxiosError;
+        let errorMessage = "";
+        if (axiosError.response?.status === 400) {
+          (axiosError.response.data as { error: z.ZodError[] }).error.forEach(
+            err => {
+              errorMessage += "  " + err.message;
+            }
+          );
+          if (errorMessage) {
+            setError(errorMessage);
+          }
+        }
+      }
+    }
+  });
+
   return (
     <div className="max-w-xl">
       {error && (
@@ -42,31 +66,7 @@ const NewIssuePage = () => {
           <Callout.Text>{error}</Callout.Text>
         </Callout.Root>
       )}
-      <form
-        className=" space-y-3"
-        onSubmit={handleSubmit(async data => {
-          try {
-            setLoading(true);
-            await axios.post("/api/issues", data);
-            router.push("/issues");
-          } catch (error: unknown) {
-            if (axios.isAxiosError(error)) {
-              setLoading(false);
-              const axiosError = error as AxiosError;
-              let errorMessage = "";
-              if (axiosError.response?.status === 400) {
-                (
-                  axiosError.response.data as { error: z.ZodError[] }
-                ).error.forEach(err => {
-                  errorMessage += "  " + err.message;
-                });
-                if (errorMessage) {
-                  setError(errorMessage);
-                }
-              }
-            }
-          }
-        })}>
+      <form className=" space-y-3" onSubmit={onSubmit}>
         <TextField.Root placeholder="Title" {...register("title")}>
           <TextField.Slot></TextField.Slot>
         </TextField.Root>
