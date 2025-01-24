@@ -1,11 +1,12 @@
 "use client";
-import React, { use, useEffect } from "react";
+import React, { useEffect } from "react";
 import SimpleMDE from "react-simplemde-editor";
 import "easymde/dist/easymde.min.css";
 import { Button, Callout, TextField } from "@radix-ui/themes";
 import { useForm, Controller } from "react-hook-form";
 import axios, { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
+import { z } from "zod";
 
 interface NewIssueForm {
   title: string;
@@ -46,7 +47,7 @@ const NewIssuePage = () => {
                 (
                   axiosError.response.data as { error: z.ZodError[] }
                 ).error.forEach(err => {
-                  errorMessage += " - " + err.message;
+                  errorMessage += "  " + err.message;
                 });
                 if (errorMessage) {
                   setError(errorMessage);
