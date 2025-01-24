@@ -33,7 +33,6 @@ export default function RootLayout({
         <Theme accentColor="blue">
           <Navbar />
           <main className="p-5">{children}</main>
-          <ThemePanel />
         </Theme>
       </body>
     </html>
