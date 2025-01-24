@@ -10,6 +10,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createIssueSchema } from "@/app/validationSchemas/createIssueSchema";
 import ErrorMessage from "@/app/components/ErrorMessage";
+import Spinner from "@/app/components/Spinner";
 
 type NewIssueForm = z.infer<typeof createIssueSchema>;
 
@@ -24,6 +25,7 @@ const NewIssuePage = () => {
     resolver: zodResolver(createIssueSchema),
   });
   const [error, setError] = React.useState<string | null>(null);
+  const [loading, setLoading] = React.useState(false);
 
   useEffect(() => {
     if (error) {
@@ -44,10 +46,12 @@ const NewIssuePage = () => {
         className=" space-y-3"
         onSubmit={handleSubmit(async data => {
           try {
+            setLoading(true);
             await axios.post("/api/issues", data);
             router.push("/issues");
           } catch (error: unknown) {
             if (axios.isAxiosError(error)) {
+              setLoading(false);
               const axiosError = error as AxiosError;
               let errorMessage = "";
               if (axiosError.response?.status === 400) {
@@ -75,7 +79,9 @@ const NewIssuePage = () => {
           )}
         />
         {<ErrorMessage>{errors.description?.message}</ErrorMessage>}
-        <Button>Submit New Issue</Button>
+        <Button disabled={loading}>
+          Submit New Issue {loading && <Spinner height={4} width={4} />}
+        </Button>
       </form>
     </div>
   );
