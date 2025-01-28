@@ -1,11 +1,29 @@
-import { Button } from "@radix-ui/themes";
-import Link from "next/link";
+"use client";
+import { AlertDialog, Button, Flex } from "@radix-ui/themes";
 
 const DeleteIssueButton = ({ id }: { id: number }) => {
   return (
-    <Button color="red">
-      <Link href={`/issues/${id}/delete`}>Delete Issue</Link>
-    </Button>
+    <>
+      <AlertDialog.Root>
+        <AlertDialog.Trigger>
+          <Button color="red">Delete Issue</Button>
+        </AlertDialog.Trigger>
+        <AlertDialog.Content>
+          <AlertDialog.Title>Confirm Deletion</AlertDialog.Title>
+          <AlertDialog.Description>
+            Are you sure you want to delete this issue?
+          </AlertDialog.Description>
+          <Flex gap="4" mt="4">
+            <AlertDialog.Cancel>
+              <Button>Cancel</Button>
+            </AlertDialog.Cancel>
+            <AlertDialog.Action>
+              <Button color="red">Delete Issue</Button>
+            </AlertDialog.Action>
+          </Flex>
+        </AlertDialog.Content>
+      </AlertDialog.Root>
+    </>
   );
 };
 
