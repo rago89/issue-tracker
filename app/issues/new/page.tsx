@@ -1,8 +1,8 @@
-import React from "react";
-import IssueForm from "../_components/IssueForm";
+"use client";
+import IssueFormLoader from "../IssueFormLoader";
 
 const NewIssuePage = () => {
-  return <IssueForm />;
+  return <IssueFormLoader />;
 };
 
 export default NewIssuePage;

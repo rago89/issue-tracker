@@ -1,14 +1,14 @@
-import React from "react";
-import IssueForm from "../../_components/IssueForm";
-import { notFound } from "next/navigation";
 import { prisma } from "@/prisma/client";
+import { notFound } from "next/navigation";
+import IssueFormLoader from "../../IssueFormLoader";
 
 type Props = {
   params: { id: number };
 };
 
 const page = async ({ params }: Props) => {
-  const id = Number(params.id);
+  const { id: idAString } = await params;
+  const id = Number(idAString);
   if (isNaN(id)) notFound();
 
   const issue = await prisma.issue.findUnique({
@@ -17,7 +17,7 @@ const page = async ({ params }: Props) => {
     },
   });
   if (!issue) notFound();
-  return <IssueForm issue={issue} />;
+  return <IssueFormLoader issue={issue} />;
 };
 
 export default page;

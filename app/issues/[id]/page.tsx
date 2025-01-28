@@ -10,7 +10,9 @@ type Props = {
 };
 
 const IssueDetailPage = async ({ params }: Props) => {
-  const id = Number(params.id);
+  const { id: idAString } = await params;
+  const id = Number(idAString);
+
   if (isNaN(id)) notFound();
   const issue = await prisma.issue.findUnique({
     where: {
