@@ -2,9 +2,29 @@
 import { AlertDialog, Button, Flex } from "@radix-ui/themes";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 const DeleteIssueButton = ({ id }: { id: number }) => {
   const router = useRouter();
+  const [isDeleted, setIsDeleted] = useState(false);
+
+  const deleteIssue = async () => {
+    try {
+      const isDeleted = await axios.delete<{ success: boolean }>(
+        `/api/issues/${id}`
+      );
+      if (isDeleted.data.success) {
+        router.push("/issues");
+      }
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        setIsDeleted(true);
+      } else if (error instanceof Error) {
+        setIsDeleted(true);
+      }
+    }
+  };
+
   return (
     <>
       <AlertDialog.Root>
@@ -21,20 +41,28 @@ const DeleteIssueButton = ({ id }: { id: number }) => {
               <Button>Cancel</Button>
             </AlertDialog.Cancel>
             <AlertDialog.Action>
-              <Button
-                onClick={async () => {
-                  const isDeleted = await axios.delete<{ success: boolean }>(
-                    `/api/issues/${id}`
-                  );
-                  if (isDeleted.data.success) {
-                    router.push("/issues");
-                  }
-                }}
-                color="red">
+              <Button onClick={deleteIssue} color="red">
                 Delete Issue
               </Button>
             </AlertDialog.Action>
           </Flex>
+        </AlertDialog.Content>
+      </AlertDialog.Root>
+      <AlertDialog.Root open={isDeleted}>
+        <AlertDialog.Content>
+          <AlertDialog.Title>Error</AlertDialog.Title>
+          <AlertDialog.Description>
+            An error occurred while deleting the issue.
+          </AlertDialog.Description>
+          <AlertDialog.Action>
+            <Button
+              onClick={() => {
+                setIsDeleted(false);
+              }}
+              mt="2">
+              Close
+            </Button>
+          </AlertDialog.Action>
         </AlertDialog.Content>
       </AlertDialog.Root>
     </>
