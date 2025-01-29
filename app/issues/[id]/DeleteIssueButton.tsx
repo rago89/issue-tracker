@@ -17,7 +17,7 @@ const DeleteIssueButton = ({ id }: { id: number }) => {
         `/api/issues/${id}`
       );
       if (isDeleted.data.success) {
-        router.push("/issues");
+        router.push("/issues/list");
       }
     } catch (error: unknown) {
       setIsDeleting(false);
